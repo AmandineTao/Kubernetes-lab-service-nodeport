@@ -1,0 +1,52 @@
+#créer ficher namespace.yml
+kubectl create ns production --dry-run=client -o yml > namespace.yml
+
+#delete it
+kubectl delete ns production
+#print namespace.yml
+vi namespace.yml
+
+#create namespace production via namespace.yml
+kubectl create -f namespace.yml
+
+#create namespace production via namespace.yml
+kubectl apply -f namespace.yml
+
+#view namespace
+kubectl get namespace
+
+#creer pod-red 
+kubectl apply -f pod-red.yml
+
+#print pod-red
+kubectl get po -n production
+
+#creer pod-blue
+
+kubectl apply -f pod-blue.yml
+
+#creer pod-red et pod-blue en cli
+kubectl run webbapp-red -n production --image kodekloud/webapp-color --port 8080 "APP_COLOR=red" -l app=web --dry-run=client -o yml > pod-red.yml 
+kubectl run webbapp-blue -n production --image kodekloud/webapp-color --port 8080 "APP_COLOR=blue" -l app=web --dry-run=client -o yml > pod-blue.yml 
+kubectl create -f pod-red.yml
+kubectl create -f pod-blue.yml
+
+#print pod-red and blue
+kubectl get po -n production
+
+#lancer les 2 pods
+kubectl port-forward amandine-pod-webapp-red 80:8080 --address 0.0.0.0 -n production
+kubectl port-forward amandine-pod-webapp-blue 80:8081 --address 0.0.0.0 -n production
+
+
+kubectl -n production expose po webapp-red --name svc-webapp --port 8080 --type NodePort --dry-run=client -o yml > service-nodeport-web.yml 
+vi service-nodeport-web.yml
+-ymodifier le port 30008
+
+kubectl apply - f service-nodeport-web.yml
+
+kubectl describe -n production 
+
+taper dans le navigateur: IP_machine:port_service --- ip_machine:30008
+
+kubectl describe -n production get all
